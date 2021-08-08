@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+option go_package = "product/";
+
+service Product {
+  rpc GetProductList (GetReq)returns (GetReply){}
+  rpc CreateProduct (CreateReq)returns (CreateReply){}
+  rpc UpdateProduct (UpdateReq)returns (UpdateReply){}
+  rpc DeleteProduct (DeleteReq)returns (DeleteReply){}
+  rpc ListingProduct (ListingReq)returns (ListingReply){}
+  rpc DeListingProduct (DeListingReq)returns (DeleteReply){}
+}
+
+
+enum Code {
+  NOKnow = 0;
+  Success = 200;
+  GetProductErr = 10000;
+  CreateProductErr = 10001;
+  UpdateProductErr = 10002;
+  DeleteProductErr = 10003;
+}
+
+
+
+message Common {
+  Code code = 1;
+  string msg = 2;
+}
+
+message ProductSku {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  int64 price = 4;
+  int64 stock = 5;
+  int64 product_id = 6;
+  string created_at = 7;
+}
+
+
+
+message ProductEntity {
+  uint64 id = 1;
+  string title = 2;
+  string description = 3;
+  string image = 4;
+  bool on_sale = 5;
+  int32 sold_count = 6;
+  int32 review_count = 7;
+  int64 price = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  repeated ProductSku skus = 11;
+}
+
+
+
+
+
+message GetReq {
+  string start_create_time = 1;
+  string end_create_time = 2;
+}
+
+
+message GetReply {
+  Common common = 1;
+  repeated ProductEntity productList = 2;
+  int64 total_page = 3;
+  int64 page = 4;
+  int64 page_size = 5;
+  int64 total = 6;
+}
+
+
+
+message CreateReq {
+  ProductEntity product = 1;
+}
+
+
+
+message CreateReply {
+  Common common = 1;
+}
+
+message UpdateReq {
+  int64 id = 1;
+  ProductEntity product = 2;
+}
+
+message UpdateReply {
+  Common common = 1;
+}
+
+message DeleteReq {
+  repeated int64 ids = 1;
+}
+
+message DeleteReply {
+  Common common = 1;
+  repeated int64 ids = 2;
+}
+
+message ListingReq {
+  repeated int64 ids = 1;
+}
+
+message ListingReply {
+  Common common = 1;
+  repeated int64 ids = 2;
+}
+
+message DeListingReq {
+  repeated int64 ids = 1;
+}
+
+message DeListingReply {
+  Common common = 1;
+  repeated int64 ids = 2;
+}
