@@ -17,6 +17,7 @@ func main() {
 	dbFile := conf.InitFileConf("../conf/db.json")
 	dbConf, err := dbFile.GetDbConf()
 	if err != nil {
+		fmt.Println("xxx")
 		log.Fatal(err)
 	}
 
@@ -35,7 +36,7 @@ func main() {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 
-	product.RegisterProductServer(grpcServer, handler.NewProductHandler())
+	product.RegisterProductServer(grpcServer, handler.InitProductHandler(db))
 	reflection.Register(grpcServer)
 	err = grpcServer.Serve(lis)
 	if err != nil {
