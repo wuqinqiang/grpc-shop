@@ -29,12 +29,12 @@ message Common {
 }
 
 message ProductSku {
-  int64 id = 1;
+  uint64 id = 1;
   string title = 2;
   string description = 3;
-  int64 price = 4;
-  int64 stock = 5;
-  int64 product_id = 6;
+  uint32 price = 4;
+  uint32 stock = 5;
+  uint64 product_id = 6;
   string created_at = 7;
 }
 
@@ -45,10 +45,10 @@ message ProductEntity {
   string title = 2;
   string description = 3;
   string image = 4;
-  bool on_sale = 5;
-  int32 sold_count = 6;
-  int32 review_count = 7;
-  int64 price = 8;
+  uint32 on_sale = 5;
+  uint32 sold_count = 6;
+  uint32 review_count = 7;
+  uint32 price = 8;
   string created_at = 9;
   string updated_at = 10;
   repeated ProductSku skus = 11;
