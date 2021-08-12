@@ -7,6 +7,10 @@ import (
 
 type ProductDao interface {
 	GetProductList() (list []*model.Product, err error)
+	CreateProduct(product *model.Product) (id int64, err error)
+	UpdateProduct(product *model.Product) error
+	FirstProductById(id int64) (*model.Product, error)
+	DeleteProductById(id int64) (count int64, err error)
 }
 
 var _ ProductDao = (*ProductImpl)(nil)
@@ -32,6 +36,32 @@ func (p *ProductImpl) GetProductList() (list []*model.Product, err error) {
 	return
 }
 
-func (p *ProductImpl) CreateProduct() {
+func (p *ProductImpl) CreateProduct(product *model.Product) (id int64, err error) {
+	err = p.db.Model(&model.Product{}).Create(product).Error
+	id = product.Id
+	return
+}
 
+func (p *ProductImpl) UpdateProduct(product *model.Product) error {
+	return p.db.Model(&model.Product{}).Updates(product).Error
+}
+
+func (p *ProductImpl) DeleteProductById(id int64) (count int64, err error) {
+	base := p.db.Model(&model.Product{}).
+		Select("Skus").
+		Delete(&model.Product{}, id)
+	count = base.RowsAffected
+	err = base.Error
+	return
+}
+
+func (p *ProductImpl) FirstProductById(id int64) (*model.Product, error) {
+	var (
+		product model.Product
+	)
+	err := p.db.Model(model.Product{}).First(&product, id).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return &product, nil
 }

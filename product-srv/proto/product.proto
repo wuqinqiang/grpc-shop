@@ -3,12 +3,12 @@ syntax = "proto3";
 option go_package = "product/";
 
 service Product {
-  rpc GetProductList (GetReq)returns (GetReply){}
-  rpc CreateProduct (CreateReq)returns (CreateReply){}
-  rpc UpdateProduct (UpdateReq)returns (UpdateReply){}
-  rpc DeleteProduct (DeleteReq)returns (DeleteReply){}
-  rpc ListingProduct (ListingReq)returns (ListingReply){}
-  rpc DeListingProduct (DeListingReq)returns (DeleteReply){}
+  rpc GetProductList (GetProductListReq)returns (GetProductListReply){}
+  rpc CreateProduct (CreateProductReq)returns (CreateProductReply){}
+  rpc UpdateProduct (UpdateProductReq)returns (UpdateProductReply){}
+  rpc DeleteProduct (DeleteProductReq)returns (DeleteProductReply){}
+  rpc ListingProduct (ListingProductReq)returns (ListingProductReply){}
+  rpc DeListingProduct (DeListingProductReq)returns (DeListingProductReply){}
 }
 
 
@@ -21,27 +21,19 @@ enum Code {
   DeleteProductErr = 10003;
 }
 
-
-
-message Common {
-  Code code = 1;
-  string msg = 2;
-}
-
 message ProductSku {
   uint64 id = 1;
   string title = 2;
-  string description = 3;
   uint32 price = 4;
   uint32 stock = 5;
   uint64 product_id = 6;
-  string created_at = 7;
+  int64 created_at = 7;
 }
 
 
 
 message ProductEntity {
-  uint64 id = 1;
+  int64 id = 1;
   string title = 2;
   string description = 3;
   string image = 4;
@@ -49,8 +41,8 @@ message ProductEntity {
   uint32 sold_count = 6;
   uint32 review_count = 7;
   uint32 price = 8;
-  string created_at = 9;
-  string updated_at = 10;
+  int64 created_at = 9;
+  int64 updated_at = 10;
   repeated ProductSku skus = 11;
 }
 
@@ -58,65 +50,87 @@ message ProductEntity {
 
 
 
-message GetReq {
+message GetProductListReq {
   string start_create_time = 1;
   string end_create_time = 2;
 }
 
 
-message GetReply {
-  Common common = 1;
-  repeated ProductEntity productList = 2;
-  int64 total_page = 3;
-  int64 page = 4;
-  int64 page_size = 5;
-  int64 total = 6;
+message GetProductListReply {
+  Code code = 1;
+  string msg = 2;
+  message product {
+    repeated ProductEntity productList = 1;
+    int64 total_page = 2;
+    int64 page = 3;
+    int64 page_size = 4;
+    int64 total = 5;
+  }
+  product data = 3;
 }
 
 
 
-message CreateReq {
+message CreateProductReq {
   ProductEntity product = 1;
 }
 
 
 
-message CreateReply {
-  Common common = 1;
+message CreateProductReply {
+  Code code = 1;
+  string msg = 2;
+  message product{
+    int64 id = 1;
+  }
+  product data = 3;
 }
 
-message UpdateReq {
+message UpdateProductReq {
   int64 id = 1;
   ProductEntity product = 2;
 }
 
-message UpdateReply {
-  Common common = 1;
+message UpdateProductReply {
+  Code code = 1;
+  string msg = 2;
 }
 
-message DeleteReq {
+message DeleteProductReq {
   repeated int64 ids = 1;
 }
 
-message DeleteReply {
-  Common common = 1;
-  repeated int64 ids = 2;
+message DeleteProductReply {
+  Code code = 1;
+  string msg = 2;
+  message product{
+    repeated int64 ids = 1;
+  }
+  product data = 3;
 }
 
-message ListingReq {
+message ListingProductReq {
   repeated int64 ids = 1;
 }
 
-message ListingReply {
-  Common common = 1;
-  repeated int64 ids = 2;
+message ListingProductReply {
+  Code code = 1;
+  string msg = 2;
+  message product {
+    repeated int64 ids = 1;
+  }
+  product data = 3;
 }
 
-message DeListingReq {
+message DeListingProductReq {
   repeated int64 ids = 1;
 }
 
-message DeListingReply {
-  Common common = 1;
-  repeated int64 ids = 2;
+message DeListingProductReply {
+  Code code = 1;
+  string msg = 2;
+  message product {
+    repeated int64 ids = 1;
+  }
+  product data = 3;
 }
