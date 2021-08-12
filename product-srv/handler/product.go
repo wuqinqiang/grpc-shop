@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"github.com/wuqinqiang/product-srv/model"
 	"github.com/wuqinqiang/product-srv/proto/product"
 	"github.com/wuqinqiang/product-srv/service"
 )
@@ -17,8 +18,12 @@ func NewProductHandler(server service.ProductServer) *ProductHandler {
 	return &ProductHandler{server: server}
 }
 
-func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetReq) (*product.GetReply, error) {
-	resp := new(product.GetReply)
+func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetProductListReq) (*product.GetProductListReply, error) {
+	resp := product.GetProductListReply{
+		Code: product.Code_Success,
+		Data: new(product.GetProductListReplyProduct),
+	}
+
 	list, err := p.server.GetProductList()
 	if err != nil {
 		return nil, err
@@ -31,9 +36,8 @@ func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetReq
 			Title:       productModel.Title,
 			Description: productModel.Description,
 			Image:       productModel.Image,
-			OnSale:      uint32(productModel.OnSale),
+			OnSale:      productModel.OnSale,
 			SoldCount:   productModel.SoldCount,
-			ReviewCount: productModel.ReviewCount,
 			Price:       productModel.Price,
 			CreatedAt:   productModel.CreatedAt,
 		}
@@ -41,38 +45,92 @@ func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetReq
 		skus := productModel.Skus
 		for j := range skus {
 			skuPb := product.ProductSku{
-				Id:          skus[j].Id,
-				Title:       skus[j].Title,
-				Description: skus[j].Description,
-				Price:       skus[j].Price,
-				Stock:       skus[j].Stock,
-				ProductId:   skus[j].ProductId,
-				CreatedAt:   skus[j].CreatedAt,
+				Id:        skus[j].Id,
+				Title:     skus[j].Title,
+				Price:     skus[j].Price,
+				Stock:     skus[j].Stock,
+				ProductId: skus[j].ProductId,
+				CreatedAt: skus[j].CreatedAt,
 			}
 			productPb.Skus = append(productPb.Skus, &skuPb)
 		}
 
-		resp.ProductList = append(resp.ProductList, &productPb)
+		resp.Data.ProductList = append(resp.Data.ProductList, &productPb)
 	}
-	return resp, nil
+	return &resp, nil
 }
 
-func (p *ProductHandler) CreateProduct(ctx context.Context, req *product.CreateReq) (*product.CreateReply, error) {
+func (p *ProductHandler) CreateProduct(ctx context.Context, req *product.CreateProductReq) (*product.CreateProductReply, error) {
+	resp := product.CreateProductReply{
+		Code: product.Code_Success,
+		Data: new(product.CreateProductReplyProduct),
+	}
+	var (
+		productModel model.Product
+	)
+	productModel.Title = req.Product.Title
+	productModel.Description = req.Product.Description
+	productModel.Image = req.Product.Image
+	productModel.OnSale = req.Product.OnSale
+
+	for i := range req.Product.Skus {
+		var (
+			skuModel model.ProductSku
+		)
+		skuReq := req.Product.Skus[i]
+		skuModel.Price = skuReq.Price
+		skuModel.Title = skuReq.Title
+		skuModel.Stock = skuReq.Stock
+		productModel.Skus = append(productModel.Skus, skuModel)
+	}
+	id, err := p.server.CreateProduct(&productModel)
+	if err != nil {
+		return nil, err
+	}
+	resp.Data.Id = id
+	return &resp, nil
+}
+
+func (p *ProductHandler) UpdateProduct(ctx context.Context, req *product.UpdateProductReq) (*product.UpdateProductReply, error) {
+	resp := product.UpdateProductReply{
+		Code: product.Code_Success,
+	}
+
+	var (
+		productModel model.Product
+	)
+	productModel.Title = req.Product.Title
+	productModel.Description = req.Product.Description
+	productModel.Image = req.Product.Image
+	productModel.OnSale = req.Product.OnSale
+
+	for i := range req.Product.Skus {
+		var (
+			skuModel model.ProductSku
+		)
+		skuReq := req.Product.Skus[i]
+		skuModel.Price = skuReq.Price
+		skuModel.Title = skuReq.Title
+		skuModel.Stock = skuReq.Stock
+		productModel.Skus = append(productModel.Skus, skuModel)
+	}
+
+	err := p.server.UpdateProduct(req.GetId(), &productModel)
+	if err != nil {
+		resp.Code = product.Code_UpdateProductErr
+		return &resp, err
+	}
+	return &resp, nil
+}
+
+func (p *ProductHandler) DeleteProduct(ctx context.Context, req *product.DeleteProductReq) (*product.DeleteProductReply, error) {
 	panic("implement me")
 }
 
-func (p *ProductHandler) UpdateProduct(ctx context.Context, req *product.UpdateReq) (*product.UpdateReply, error) {
+func (p *ProductHandler) ListingProduct(ctx context.Context, req *product.ListingProductReq) (*product.ListingProductReply, error) {
 	panic("implement me")
 }
 
-func (p *ProductHandler) DeleteProduct(ctx context.Context, req *product.DeleteReq) (*product.DeleteReply, error) {
-	panic("implement me")
-}
-
-func (p *ProductHandler) ListingProduct(ctx context.Context, req *product.ListingReq) (*product.ListingReply, error) {
-	panic("implement me")
-}
-
-func (p *ProductHandler) DeListingProduct(ctx context.Context, req *product.DeListingReq) (*product.DeleteReply, error) {
+func (p *ProductHandler) DeListingProduct(ctx context.Context, req *product.DeListingProductReq) (*product.DeListingProductReply, error) {
 	panic("implement me")
 }

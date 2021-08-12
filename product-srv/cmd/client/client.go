@@ -20,7 +20,7 @@ func main() {
 	}
 
 	lpClient := product.NewProductClient(cc)
-	list, err := lpClient.GetProductList(context.Background(), &product.GetReq{})
+	list, err := lpClient.GetProductList(context.Background(), &product.GetProductListReq{})
 	if err != nil {
 		fmt.Println("错误:", err)
 		return

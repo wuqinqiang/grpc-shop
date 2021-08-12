@@ -3,4 +3,7 @@ server:
 proto:
 	protoc --proto_path=proto proto/*.proto --go_out=:proto --go-grpc_out=:proto
 
+lint:
+	golangci-lint run
+
 .PHONY:server proto

@@ -18,12 +18,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductClient interface {
-	GetProductList(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*GetReply, error)
-	CreateProduct(ctx context.Context, in *CreateReq, opts ...grpc.CallOption) (*CreateReply, error)
-	UpdateProduct(ctx context.Context, in *UpdateReq, opts ...grpc.CallOption) (*UpdateReply, error)
-	DeleteProduct(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*DeleteReply, error)
-	ListingProduct(ctx context.Context, in *ListingReq, opts ...grpc.CallOption) (*ListingReply, error)
-	DeListingProduct(ctx context.Context, in *DeListingReq, opts ...grpc.CallOption) (*DeleteReply, error)
+	GetProductList(ctx context.Context, in *GetProductListReq, opts ...grpc.CallOption) (*GetProductListReply, error)
+	CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CreateProductReply, error)
+	UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*UpdateProductReply, error)
+	DeleteProduct(ctx context.Context, in *DeleteProductReq, opts ...grpc.CallOption) (*DeleteProductReply, error)
+	ListingProduct(ctx context.Context, in *ListingProductReq, opts ...grpc.CallOption) (*ListingProductReply, error)
+	DeListingProduct(ctx context.Context, in *DeListingProductReq, opts ...grpc.CallOption) (*DeListingProductReply, error)
 }
 
 type productClient struct {
@@ -34,8 +34,8 @@ func NewProductClient(cc grpc.ClientConnInterface) ProductClient {
 	return &productClient{cc}
 }
 
-func (c *productClient) GetProductList(ctx context.Context, in *GetReq, opts ...grpc.CallOption) (*GetReply, error) {
-	out := new(GetReply)
+func (c *productClient) GetProductList(ctx context.Context, in *GetProductListReq, opts ...grpc.CallOption) (*GetProductListReply, error) {
+	out := new(GetProductListReply)
 	err := c.cc.Invoke(ctx, "/Product/GetProductList", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -43,8 +43,8 @@ func (c *productClient) GetProductList(ctx context.Context, in *GetReq, opts ...
 	return out, nil
 }
 
-func (c *productClient) CreateProduct(ctx context.Context, in *CreateReq, opts ...grpc.CallOption) (*CreateReply, error) {
-	out := new(CreateReply)
+func (c *productClient) CreateProduct(ctx context.Context, in *CreateProductReq, opts ...grpc.CallOption) (*CreateProductReply, error) {
+	out := new(CreateProductReply)
 	err := c.cc.Invoke(ctx, "/Product/CreateProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -52,8 +52,8 @@ func (c *productClient) CreateProduct(ctx context.Context, in *CreateReq, opts .
 	return out, nil
 }
 
-func (c *productClient) UpdateProduct(ctx context.Context, in *UpdateReq, opts ...grpc.CallOption) (*UpdateReply, error) {
-	out := new(UpdateReply)
+func (c *productClient) UpdateProduct(ctx context.Context, in *UpdateProductReq, opts ...grpc.CallOption) (*UpdateProductReply, error) {
+	out := new(UpdateProductReply)
 	err := c.cc.Invoke(ctx, "/Product/UpdateProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -61,8 +61,8 @@ func (c *productClient) UpdateProduct(ctx context.Context, in *UpdateReq, opts .
 	return out, nil
 }
 
-func (c *productClient) DeleteProduct(ctx context.Context, in *DeleteReq, opts ...grpc.CallOption) (*DeleteReply, error) {
-	out := new(DeleteReply)
+func (c *productClient) DeleteProduct(ctx context.Context, in *DeleteProductReq, opts ...grpc.CallOption) (*DeleteProductReply, error) {
+	out := new(DeleteProductReply)
 	err := c.cc.Invoke(ctx, "/Product/DeleteProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,8 +70,8 @@ func (c *productClient) DeleteProduct(ctx context.Context, in *DeleteReq, opts .
 	return out, nil
 }
 
-func (c *productClient) ListingProduct(ctx context.Context, in *ListingReq, opts ...grpc.CallOption) (*ListingReply, error) {
-	out := new(ListingReply)
+func (c *productClient) ListingProduct(ctx context.Context, in *ListingProductReq, opts ...grpc.CallOption) (*ListingProductReply, error) {
+	out := new(ListingProductReply)
 	err := c.cc.Invoke(ctx, "/Product/ListingProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,8 @@ func (c *productClient) ListingProduct(ctx context.Context, in *ListingReq, opts
 	return out, nil
 }
 
-func (c *productClient) DeListingProduct(ctx context.Context, in *DeListingReq, opts ...grpc.CallOption) (*DeleteReply, error) {
-	out := new(DeleteReply)
+func (c *productClient) DeListingProduct(ctx context.Context, in *DeListingProductReq, opts ...grpc.CallOption) (*DeListingProductReply, error) {
+	out := new(DeListingProductReply)
 	err := c.cc.Invoke(ctx, "/Product/DeListingProduct", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -92,12 +92,12 @@ func (c *productClient) DeListingProduct(ctx context.Context, in *DeListingReq, 
 // All implementations must embed UnimplementedProductServer
 // for forward compatibility
 type ProductServer interface {
-	GetProductList(context.Context, *GetReq) (*GetReply, error)
-	CreateProduct(context.Context, *CreateReq) (*CreateReply, error)
-	UpdateProduct(context.Context, *UpdateReq) (*UpdateReply, error)
-	DeleteProduct(context.Context, *DeleteReq) (*DeleteReply, error)
-	ListingProduct(context.Context, *ListingReq) (*ListingReply, error)
-	DeListingProduct(context.Context, *DeListingReq) (*DeleteReply, error)
+	GetProductList(context.Context, *GetProductListReq) (*GetProductListReply, error)
+	CreateProduct(context.Context, *CreateProductReq) (*CreateProductReply, error)
+	UpdateProduct(context.Context, *UpdateProductReq) (*UpdateProductReply, error)
+	DeleteProduct(context.Context, *DeleteProductReq) (*DeleteProductReply, error)
+	ListingProduct(context.Context, *ListingProductReq) (*ListingProductReply, error)
+	DeListingProduct(context.Context, *DeListingProductReq) (*DeListingProductReply, error)
 	mustEmbedUnimplementedProductServer()
 }
 
@@ -105,22 +105,22 @@ type ProductServer interface {
 type UnimplementedProductServer struct {
 }
 
-func (UnimplementedProductServer) GetProductList(context.Context, *GetReq) (*GetReply, error) {
+func (UnimplementedProductServer) GetProductList(context.Context, *GetProductListReq) (*GetProductListReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProductList not implemented")
 }
-func (UnimplementedProductServer) CreateProduct(context.Context, *CreateReq) (*CreateReply, error) {
+func (UnimplementedProductServer) CreateProduct(context.Context, *CreateProductReq) (*CreateProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
 }
-func (UnimplementedProductServer) UpdateProduct(context.Context, *UpdateReq) (*UpdateReply, error) {
+func (UnimplementedProductServer) UpdateProduct(context.Context, *UpdateProductReq) (*UpdateProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProduct not implemented")
 }
-func (UnimplementedProductServer) DeleteProduct(context.Context, *DeleteReq) (*DeleteReply, error) {
+func (UnimplementedProductServer) DeleteProduct(context.Context, *DeleteProductReq) (*DeleteProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
 }
-func (UnimplementedProductServer) ListingProduct(context.Context, *ListingReq) (*ListingReply, error) {
+func (UnimplementedProductServer) ListingProduct(context.Context, *ListingProductReq) (*ListingProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListingProduct not implemented")
 }
-func (UnimplementedProductServer) DeListingProduct(context.Context, *DeListingReq) (*DeleteReply, error) {
+func (UnimplementedProductServer) DeListingProduct(context.Context, *DeListingProductReq) (*DeListingProductReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeListingProduct not implemented")
 }
 func (UnimplementedProductServer) mustEmbedUnimplementedProductServer() {}
@@ -137,7 +137,7 @@ func RegisterProductServer(s grpc.ServiceRegistrar, srv ProductServer) {
 }
 
 func _Product_GetProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetReq)
+	in := new(GetProductListReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -149,13 +149,13 @@ func _Product_GetProductList_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/Product/GetProductList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).GetProductList(ctx, req.(*GetReq))
+		return srv.(ProductServer).GetProductList(ctx, req.(*GetProductListReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Product_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateReq)
+	in := new(CreateProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -167,13 +167,13 @@ func _Product_CreateProduct_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/Product/CreateProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).CreateProduct(ctx, req.(*CreateReq))
+		return srv.(ProductServer).CreateProduct(ctx, req.(*CreateProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Product_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateReq)
+	in := new(UpdateProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -185,13 +185,13 @@ func _Product_UpdateProduct_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/Product/UpdateProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).UpdateProduct(ctx, req.(*UpdateReq))
+		return srv.(ProductServer).UpdateProduct(ctx, req.(*UpdateProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Product_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteReq)
+	in := new(DeleteProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -203,13 +203,13 @@ func _Product_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/Product/DeleteProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).DeleteProduct(ctx, req.(*DeleteReq))
+		return srv.(ProductServer).DeleteProduct(ctx, req.(*DeleteProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Product_ListingProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListingReq)
+	in := new(ListingProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -221,13 +221,13 @@ func _Product_ListingProduct_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/Product/ListingProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).ListingProduct(ctx, req.(*ListingReq))
+		return srv.(ProductServer).ListingProduct(ctx, req.(*ListingProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Product_DeListingProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeListingReq)
+	in := new(DeListingProductReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -239,7 +239,7 @@ func _Product_DeListingProduct_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: "/Product/DeListingProduct",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).DeListingProduct(ctx, req.(*DeListingReq))
+		return srv.(ProductServer).DeListingProduct(ctx, req.(*DeListingProductReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
