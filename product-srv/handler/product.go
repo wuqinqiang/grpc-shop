@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/wuqinqiang/product-srv/model"
+	"github.com/wuqinqiang/product-srv/param"
 	"github.com/wuqinqiang/product-srv/proto/product"
 	"github.com/wuqinqiang/product-srv/service"
 )
@@ -23,12 +24,15 @@ func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetPro
 		Code: product.Code_Success,
 		Data: new(product.GetProductListReplyProduct),
 	}
+	getListParam := param.InitGetListParam(
+		req.GetStartCreateTime(),
+		req.GetEndCreateTime(), req.GetPage(), req.GetPageSize())
 
-	list, err := p.server.GetProductList()
+	list, count, err := p.server.GetProductList(getListParam)
 	if err != nil {
+		resp.Code = product.Code_GetProductErr
 		return nil, err
 	}
-
 	for index := range list {
 		productModel := list[index]
 		productPb := product.ProductEntity{
@@ -57,6 +61,13 @@ func (p *ProductHandler) GetProductList(ctx context.Context, req *product.GetPro
 
 		resp.Data.ProductList = append(resp.Data.ProductList, &productPb)
 	}
+
+	pageInfo := getListParam.Page.GetListPage(count)
+
+	resp.Data.Total = pageInfo.Total
+	resp.Data.PageSize = pageInfo.PageSize
+	resp.Data.Page = pageInfo.Page
+	resp.Data.TotalPage = pageInfo.TotalPage
 	return &resp, nil
 }
 
@@ -65,6 +76,11 @@ func (p *ProductHandler) CreateProduct(ctx context.Context, req *product.CreateP
 		Code: product.Code_Success,
 		Data: new(product.CreateProductReplyProduct),
 	}
+	err := req.Validate()
+	if err != nil {
+		return &resp, err
+	}
+
 	var (
 		productModel model.Product
 	)

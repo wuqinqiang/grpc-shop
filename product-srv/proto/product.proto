@@ -41,7 +41,7 @@ message ProductEntity {
   string title = 2;
   string description = 3;
   string image = 4;
-  uint32 on_sale = 5 [(validate.rules).uint32 = {gte:1,lte:90}];
+  uint32 on_sale = 5 [(validate.rules).uint32 = {gte:1,lte:2}];
   uint32 sold_count = 6;
   uint32 review_count = 7;
   uint32 price = 8;
@@ -55,8 +55,10 @@ message ProductEntity {
 
 
 message GetProductListReq {
-  string start_create_time = 1;
-  string end_create_time = 2;
+  int64 start_create_time = 1;
+  int64 end_create_time = 2;
+  int64 page_size = 3;
+  int64 page = 4;
 }
 
 
