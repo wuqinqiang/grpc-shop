@@ -2,11 +2,12 @@ package dao
 
 import (
 	"github.com/wuqinqiang/product-srv/model"
+	"github.com/wuqinqiang/product-srv/param"
 	"gorm.io/gorm"
 )
 
 type ProductDao interface {
-	GetProductList() (list []*model.Product, err error)
+	GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error)
 	CreateProduct(product *model.Product) (id int64, err error)
 	UpdateProduct(product *model.Product) error
 	FirstProductById(id int64) (*model.Product, error)
@@ -27,14 +28,31 @@ func NewProductImpl(db *gorm.DB) ProductDao {
 	}
 }
 
-func (p *ProductImpl) GetProductList() (list []*model.Product, err error) {
-	err = p.db.Model(&model.Product{}).
-		Scopes(model.GetWithOnSale(model.ProductInSale)).
-		Preload("Skus", func(db *gorm.DB) *gorm.DB {
-			return db.Select(
-				"id,title,description,price,stock,product_id,created_at")
-		}).
-		Find(&list).Error
+func (p *ProductImpl) GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error) {
+	base := p.db.Model(&model.Product{}).Debug().
+	Preload("Skus", func(db *gorm.DB) *gorm.DB {
+		return db.Select(
+			"id,title,price,stock,product_id,created_at")
+	})
+
+	var (
+		scopes []func(db *gorm.DB) *gorm.DB
+	)
+
+	scopes = append(scopes, model.GetWithOnSale(model.ProductInSale))
+	if param.StartCreateTime > 0 {
+		scopes = append(scopes, model.GetWithGreaterCreateTime(param.StartCreateTime))
+	}
+
+	if param.EndCreateTime > 0 {
+		scopes = append(scopes, model.GetWithLessThanCreateTime(param.EndCreateTime))
+	}
+
+	base.Scopes(scopes...)
+
+	base.Count(&count)
+
+	err = base.Scopes(param.Page.Paginate()).Find(&list).Error
 	return
 }
 

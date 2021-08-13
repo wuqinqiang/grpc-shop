@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/wuqinqiang/product-srv/dao"
 	"github.com/wuqinqiang/product-srv/model"
+	"github.com/wuqinqiang/product-srv/param"
 )
 
 var (
@@ -12,7 +13,7 @@ var (
 )
 
 type ProductServer interface {
-	GetProductList() (list []*model.Product, err error)
+	GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error)
 	CreateProduct(product *model.Product) (id int64, err error)
 	UpdateProduct(id int64, product *model.Product) error
 	DeleteProductByIds(ids []int64) ([]int64, error)
@@ -30,8 +31,8 @@ func NewProductServerImpl(dao dao.ProductDao) ProductServer {
 	return &ProductServerImpl{productDao: dao}
 }
 
-func (s *ProductServerImpl) GetProductList() (list []*model.Product, err error) {
-	return s.productDao.GetProductList()
+func (s *ProductServerImpl) GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error) {
+	return s.productDao.GetProductList(param)
 }
 
 func (s *ProductServerImpl) CreateProduct(product *model.Product) (id int64, err error) {

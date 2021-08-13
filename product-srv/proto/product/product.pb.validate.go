@@ -125,10 +125,10 @@ func (m *ProductEntity) Validate() error {
 
 	// no validation rules for Image
 
-	if val := m.GetOnSale(); val < 1 || val > 90 {
+	if val := m.GetOnSale(); val < 1 || val > 2 {
 		return ProductEntityValidationError{
 			field:  "OnSale",
-			reason: "value must be inside range [1, 90]",
+			reason: "value must be inside range [1, 2]",
 		}
 	}
 
@@ -225,6 +225,10 @@ func (m *GetProductListReq) Validate() error {
 	// no validation rules for StartCreateTime
 
 	// no validation rules for EndCreateTime
+
+	// no validation rules for PageSize
+
+	// no validation rules for Page
 
 	return nil
 }
