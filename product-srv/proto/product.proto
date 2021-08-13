@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-option go_package = "product/";
+option go_package = "./product";
+import "validate/validate.proto";
 
 service Product {
   rpc GetProductList (GetProductListReq)returns (GetProductListReply){}
@@ -19,6 +20,9 @@ enum Code {
   CreateProductErr = 10001;
   UpdateProductErr = 10002;
   DeleteProductErr = 10003;
+  ListingProductErr = 10004;
+  DeListingProductErr = 10005;
+
 }
 
 message ProductSku {
@@ -37,7 +41,7 @@ message ProductEntity {
   string title = 2;
   string description = 3;
   string image = 4;
-  uint32 on_sale = 5;
+  uint32 on_sale = 5 [(validate.rules).uint32 = {gte:1,lte:90}];
   uint32 sold_count = 6;
   uint32 review_count = 7;
   uint32 price = 8;

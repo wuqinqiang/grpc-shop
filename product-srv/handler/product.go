@@ -124,13 +124,41 @@ func (p *ProductHandler) UpdateProduct(ctx context.Context, req *product.UpdateP
 }
 
 func (p *ProductHandler) DeleteProduct(ctx context.Context, req *product.DeleteProductReq) (*product.DeleteProductReply, error) {
-	panic("implement me")
+	resp := product.DeleteProductReply{
+		Code: product.Code_Success,
+	}
+
+	ids, err := p.server.DeleteProductByIds(req.GetIds())
+	if err != nil {
+		resp.Code = product.Code_DeleteProductErr
+		return &resp, err
+	}
+	resp.Data.Ids = ids
+	return &resp, nil
 }
 
 func (p *ProductHandler) ListingProduct(ctx context.Context, req *product.ListingProductReq) (*product.ListingProductReply, error) {
-	panic("implement me")
+	resp := product.ListingProductReply{
+		Code: product.Code_Success,
+	}
+	ids, err := p.server.ListingProductById(req.GetIds())
+	if err != nil {
+		resp.Code = product.Code_ListingProductErr
+		return &resp, err
+	}
+	resp.Data.Ids = ids
+	return &resp, nil
 }
 
 func (p *ProductHandler) DeListingProduct(ctx context.Context, req *product.DeListingProductReq) (*product.DeListingProductReply, error) {
-	panic("implement me")
+	resp := product.DeListingProductReply{
+		Code: product.Code_Success,
+	}
+	ids, err := p.server.DeListingProductById(req.GetIds())
+	if err != nil {
+		resp.Code = product.Code_DeListingProductErr
+		return &resp, err
+	}
+	resp.Data.Ids = ids
+	return &resp, nil
 }

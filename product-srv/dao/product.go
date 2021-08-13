@@ -11,6 +11,8 @@ type ProductDao interface {
 	UpdateProduct(product *model.Product) error
 	FirstProductById(id int64) (*model.Product, error)
 	DeleteProductById(id int64) (count int64, err error)
+	ListingProductById(id int64) (count int64, err error)
+	DeListingProductById(id int64) (count int64, err error)
 }
 
 var _ ProductDao = (*ProductImpl)(nil)
@@ -64,4 +66,22 @@ func (p *ProductImpl) FirstProductById(id int64) (*model.Product, error) {
 		return nil, nil
 	}
 	return &product, nil
+}
+
+func (p *ProductImpl) ListingProductById(id int64) (count int64, err error) {
+	base := p.db.Model(&model.Product{}).
+		Where("id=?", id).
+		Update("on_sale", model.ProductInSale)
+	count = base.RowsAffected
+	err = base.Error
+	return
+}
+
+func (p *ProductImpl) DeListingProductById(id int64) (count int64, err error) {
+	base := p.db.Model(&model.Product{}).
+		Where("id=?", id).
+		Update("on_sale", model.ProductNotSale)
+	count = base.RowsAffected
+	err = base.Error
+	return
 }

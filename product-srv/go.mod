@@ -3,6 +3,7 @@ module github.com/wuqinqiang/product-srv
 go 1.15
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v0.6.1
 	github.com/gohouse/converter v0.0.3
 	github.com/google/wire v0.5.0
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
