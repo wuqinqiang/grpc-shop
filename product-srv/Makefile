@@ -11,5 +11,15 @@ lint:
 .PHONY:server proto
 
 
+
+###########git############
+
+pull:
+	git push --rebase
+
+
+
+
+
 ## https://studygolang.com/articles/25743
 ## https://www.cnblogs.com/yisany/p/14888041.html

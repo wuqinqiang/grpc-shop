@@ -28,11 +28,18 @@ func (Product) TableName() string {
 	return "products"
 }
 
+func GetWithId(id int64) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("id=?", id)
+	}
+}
+
 func GetWithOnSale(state ProductState) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("on_sale=?", state)
 	}
 }
+
 func GetWithGreaterCreateTime(time int64) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("created_at>=?", time)

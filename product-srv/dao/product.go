@@ -9,7 +9,7 @@ import (
 type ProductDao interface {
 	GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error)
 	CreateProduct(product *model.Product) (id int64, err error)
-	UpdateProduct(product *model.Product) error
+	UpdateProductById(product *model.Product, id int64) error
 	FirstProductById(id int64) (*model.Product, error)
 	DeleteProductById(id int64) (count int64, err error)
 	ListingProductById(id int64) (count int64, err error)
@@ -30,10 +30,10 @@ func NewProductImpl(db *gorm.DB) ProductDao {
 
 func (p *ProductImpl) GetProductList(param param.GetListParam) (list []*model.Product, count int64, err error) {
 	base := p.db.Model(&model.Product{}).Debug().
-	Preload("Skus", func(db *gorm.DB) *gorm.DB {
-		return db.Select(
-			"id,title,price,stock,product_id,created_at")
-	})
+		Preload("Skus", func(db *gorm.DB) *gorm.DB {
+			return db.Select(
+				"id,title,price,stock,product_id,created_at")
+		})
 
 	var (
 		scopes []func(db *gorm.DB) *gorm.DB
@@ -62,8 +62,10 @@ func (p *ProductImpl) CreateProduct(product *model.Product) (id int64, err error
 	return
 }
 
-func (p *ProductImpl) UpdateProduct(product *model.Product) error {
-	return p.db.Model(&model.Product{}).Updates(product).Error
+func (p *ProductImpl) UpdateProductById(product *model.Product, id int64) error {
+	return p.db.Model(&model.Product{}).
+		Scopes(model.GetWithId(id)).
+		Updates(product).Error
 }
 
 func (p *ProductImpl) DeleteProductById(id int64) (count int64, err error) {

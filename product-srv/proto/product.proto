@@ -27,9 +27,9 @@ enum Code {
 
 message ProductSku {
   uint64 id = 1;
-  string title = 2;
-  uint32 price = 4;
-  uint32 stock = 5;
+  string title = 2 [(validate.rules).string = {min_len:5,max_len:30}];
+  uint32 price = 4 [(validate.rules).uint32.lte = 99999999];
+  uint32 stock = 5 [(validate.rules).uint32 = {gte:1,lte:999}];
   uint64 product_id = 6;
   int64 created_at = 7;
 }
@@ -38,16 +38,16 @@ message ProductSku {
 
 message ProductEntity {
   int64 id = 1;
-  string title = 2;
-  string description = 3;
-  string image = 4;
+  string title = 2 [(validate.rules).string = {min_len:5,max_len:30}];
+  string description = 3[(validate.rules).string = {max_len:299}];
+  string image = 4[(validate.rules).string = {max_len:199}];
   uint32 on_sale = 5 [(validate.rules).uint32 = {gte:1,lte:2}];
   uint32 sold_count = 6;
   uint32 review_count = 7;
-  uint32 price = 8;
+  uint32 price = 8 [(validate.rules).uint32.lte = 99999999];
   int64 created_at = 9;
   int64 updated_at = 10;
-  repeated ProductSku skus = 11;
+  repeated ProductSku skus = 11[(validate.rules).repeated.min_items = 1];
 }
 
 
@@ -103,20 +103,20 @@ message UpdateProductReply {
 }
 
 message DeleteProductReq {
-  repeated int64 ids = 1;
+  repeated int64 ids = 1 [(validate.rules).repeated.min_items = 1];
 }
 
 message DeleteProductReply {
   Code code = 1;
   string msg = 2;
   message product{
-    repeated int64 ids = 1;
+    repeated int64 ids = 1 ;
   }
   product data = 3;
 }
 
 message ListingProductReq {
-  repeated int64 ids = 1;
+  repeated int64 ids = 1 [(validate.rules).repeated.min_items = 1];
 }
 
 message ListingProductReply {
@@ -129,7 +129,7 @@ message ListingProductReply {
 }
 
 message DeListingProductReq {
-  repeated int64 ids = 1;
+  repeated int64 ids = 1 [(validate.rules).repeated.min_items = 1];
 }
 
 message DeListingProductReply {
