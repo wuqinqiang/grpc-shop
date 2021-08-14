@@ -17,6 +17,10 @@ lint:
 pull:
 	git push --rebase
 
+checkout:
+	@# echo $x;
+	- git checkout $x;
+
 
 
 
