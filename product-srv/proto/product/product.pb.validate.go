@@ -42,11 +42,26 @@ func (m *ProductSku) Validate() error {
 
 	// no validation rules for Id
 
-	// no validation rules for Title
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 5 || l > 30 {
+		return ProductSkuValidationError{
+			field:  "Title",
+			reason: "value length must be between 5 and 30 runes, inclusive",
+		}
+	}
 
-	// no validation rules for Price
+	if m.GetPrice() > 99999999 {
+		return ProductSkuValidationError{
+			field:  "Price",
+			reason: "value must be less than or equal to 99999999",
+		}
+	}
 
-	// no validation rules for Stock
+	if val := m.GetStock(); val < 1 || val > 999 {
+		return ProductSkuValidationError{
+			field:  "Stock",
+			reason: "value must be inside range [1, 999]",
+		}
+	}
 
 	// no validation rules for ProductId
 
@@ -119,11 +134,26 @@ func (m *ProductEntity) Validate() error {
 
 	// no validation rules for Id
 
-	// no validation rules for Title
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 5 || l > 30 {
+		return ProductEntityValidationError{
+			field:  "Title",
+			reason: "value length must be between 5 and 30 runes, inclusive",
+		}
+	}
 
-	// no validation rules for Description
+	if utf8.RuneCountInString(m.GetDescription()) > 299 {
+		return ProductEntityValidationError{
+			field:  "Description",
+			reason: "value length must be at most 299 runes",
+		}
+	}
 
-	// no validation rules for Image
+	if utf8.RuneCountInString(m.GetImage()) > 199 {
+		return ProductEntityValidationError{
+			field:  "Image",
+			reason: "value length must be at most 199 runes",
+		}
+	}
 
 	if val := m.GetOnSale(); val < 1 || val > 2 {
 		return ProductEntityValidationError{
@@ -136,11 +166,23 @@ func (m *ProductEntity) Validate() error {
 
 	// no validation rules for ReviewCount
 
-	// no validation rules for Price
+	if m.GetPrice() > 99999999 {
+		return ProductEntityValidationError{
+			field:  "Price",
+			reason: "value must be less than or equal to 99999999",
+		}
+	}
 
 	// no validation rules for CreatedAt
 
 	// no validation rules for UpdatedAt
+
+	if len(m.GetSkus()) < 1 {
+		return ProductEntityValidationError{
+			field:  "Skus",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
 
 	for idx, item := range m.GetSkus() {
 		_, _ = idx, item
@@ -682,6 +724,13 @@ func (m *DeleteProductReq) Validate() error {
 		return nil
 	}
 
+	if len(m.GetIds()) < 1 {
+		return DeleteProductReqValidationError{
+			field:  "Ids",
+			reason: "value must contain at least 1 item(s)",
+		}
+	}
+
 	return nil
 }
 
@@ -826,6 +875,13 @@ var _ interface {
 func (m *ListingProductReq) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	if len(m.GetIds()) < 1 {
+		return ListingProductReqValidationError{
+			field:  "Ids",
+			reason: "value must contain at least 1 item(s)",
+		}
 	}
 
 	return nil
@@ -974,6 +1030,13 @@ var _ interface {
 func (m *DeListingProductReq) Validate() error {
 	if m == nil {
 		return nil
+	}
+
+	if len(m.GetIds()) < 1 {
+		return DeListingProductReqValidationError{
+			field:  "Ids",
+			reason: "value must contain at least 1 item(s)",
+		}
 	}
 
 	return nil

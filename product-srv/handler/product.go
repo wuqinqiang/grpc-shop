@@ -84,21 +84,31 @@ func (p *ProductHandler) CreateProduct(ctx context.Context, req *product.CreateP
 	var (
 		productModel model.Product
 	)
-	productModel.Title = req.Product.Title
-	productModel.Description = req.Product.Description
-	productModel.Image = req.Product.Image
-	productModel.OnSale = req.Product.OnSale
+	productModel.Title = req.GetProduct().GetTitle()
+	productModel.Description = req.GetProduct().GetDescription()
+	productModel.Image = req.GetProduct().GetImage()
+	productModel.OnSale = req.GetProduct().GetOnSale()
 
 	for i := range req.Product.Skus {
 		var (
 			skuModel model.ProductSku
 		)
-		skuReq := req.Product.Skus[i]
-		skuModel.Price = skuReq.Price
-		skuModel.Title = skuReq.Title
-		skuModel.Stock = skuReq.Stock
+		skuReq := req.Product.GetSkus()[i]
+		skuModel.Price = skuReq.GetPrice()
+		skuModel.Title = skuReq.GetTitle()
+		skuModel.Stock = skuReq.GetStock()
 		productModel.Skus = append(productModel.Skus, skuModel)
 	}
+
+	min := productModel.Skus[0].Price
+
+	for i := range productModel.Skus {
+		if productModel.Skus[i].Price < min {
+			min = productModel.Skus[i].Price
+		}
+	}
+	productModel.Price = min
+
 	id, err := p.server.CreateProduct(&productModel)
 	if err != nil {
 		return nil, err
@@ -112,26 +122,39 @@ func (p *ProductHandler) UpdateProduct(ctx context.Context, req *product.UpdateP
 		Code: product.Code_Success,
 	}
 
+	err := req.Validate()
+	if err != nil {
+		return &resp, err
+	}
+
 	var (
 		productModel model.Product
 	)
-	productModel.Title = req.Product.Title
-	productModel.Description = req.Product.Description
-	productModel.Image = req.Product.Image
-	productModel.OnSale = req.Product.OnSale
+	productModel.Title = req.GetProduct().GetTitle()
+	productModel.Description = req.GetProduct().GetDescription()
+	productModel.Image = req.GetProduct().GetImage()
+	productModel.OnSale = req.GetProduct().GetOnSale()
 
 	for i := range req.Product.Skus {
 		var (
 			skuModel model.ProductSku
 		)
-		skuReq := req.Product.Skus[i]
-		skuModel.Price = skuReq.Price
-		skuModel.Title = skuReq.Title
-		skuModel.Stock = skuReq.Stock
+		skuReq := req.Product.GetSkus()[i]
+		skuModel.Price = skuReq.GetPrice()
+		skuModel.Title = skuReq.GetTitle()
+		skuModel.Stock = skuReq.GetStock()
 		productModel.Skus = append(productModel.Skus, skuModel)
 	}
+	min := productModel.Skus[0].Price
 
-	err := p.server.UpdateProduct(req.GetId(), &productModel)
+	for i := range productModel.Skus {
+		if productModel.Skus[i].Price < min {
+			min = productModel.Skus[i].Price
+		}
+	}
+	productModel.Price = min
+
+	err = p.server.UpdateProduct(req.GetId(), &productModel)
 	if err != nil {
 		resp.Code = product.Code_UpdateProductErr
 		return &resp, err
@@ -142,6 +165,11 @@ func (p *ProductHandler) UpdateProduct(ctx context.Context, req *product.UpdateP
 func (p *ProductHandler) DeleteProduct(ctx context.Context, req *product.DeleteProductReq) (*product.DeleteProductReply, error) {
 	resp := product.DeleteProductReply{
 		Code: product.Code_Success,
+		Data: new(product.DeleteProductReplyProduct),
+	}
+	err := req.Validate()
+	if err != nil {
+		return &resp, err
 	}
 
 	ids, err := p.server.DeleteProductByIds(req.GetIds())
@@ -156,7 +184,13 @@ func (p *ProductHandler) DeleteProduct(ctx context.Context, req *product.DeleteP
 func (p *ProductHandler) ListingProduct(ctx context.Context, req *product.ListingProductReq) (*product.ListingProductReply, error) {
 	resp := product.ListingProductReply{
 		Code: product.Code_Success,
+		Data: new(product.ListingProductReplyProduct),
 	}
+	err := req.Validate()
+	if err != nil {
+		return &resp, err
+	}
+
 	ids, err := p.server.ListingProductById(req.GetIds())
 	if err != nil {
 		resp.Code = product.Code_ListingProductErr
@@ -169,7 +203,13 @@ func (p *ProductHandler) ListingProduct(ctx context.Context, req *product.Listin
 func (p *ProductHandler) DeListingProduct(ctx context.Context, req *product.DeListingProductReq) (*product.DeListingProductReply, error) {
 	resp := product.DeListingProductReply{
 		Code: product.Code_Success,
+		Data: new(product.DeListingProductReplyProduct),
 	}
+	err := req.Validate()
+	if err != nil {
+		return &resp, err
+	}
+
 	ids, err := p.server.DeListingProductById(req.GetIds())
 	if err != nil {
 		resp.Code = product.Code_DeListingProductErr

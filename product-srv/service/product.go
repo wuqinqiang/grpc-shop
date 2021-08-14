@@ -47,8 +47,7 @@ func (s *ProductServerImpl) UpdateProduct(id int64, product *model.Product) erro
 	if firstProduct == nil {
 		return ProductNoFoundErr
 	}
-	product.Id = id
-	return s.productDao.UpdateProduct(product)
+	return s.productDao.UpdateProductById(product, id)
 }
 
 func (s *ProductServerImpl) DeleteProductByIds(ids []int64) ([]int64, error) {
